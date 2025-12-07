@@ -17,6 +17,9 @@ const CONFIG = {
     INITIAL_DIRECTION: 'RIGHT',
     GAME_SPEED: 150,        // Milliseconds per move (Nokia feel)
     
+    // Scoring
+    POINTS_PER_FOOD: 10,    // Points awarded for each food eaten
+    
     // Nokia LCD Color Scheme
     COLORS: {
         BACKGROUND: '#9bbc0f',      // Light LCD green
@@ -39,6 +42,8 @@ let nextDirection = CONFIG.INITIAL_DIRECTION;  // Queued direction for next tick
 let gameLoop = null;
 let isGameRunning = false;
 let isGameOver = false;
+let score = 0;                      // Current game score
+let highScore = 0;                  // Best score (persisted)
 
 // =============================================================================
 // CANVAS SETUP
@@ -102,6 +107,7 @@ function moveSnake() {
     // Check if snake ate food
     if (checkFoodCollision()) {
         // Don't remove tail - snake grows!
+        addScore(CONFIG.POINTS_PER_FOOD);  // Add points
         spawnFood();  // Spawn new food
         return true;
     }
@@ -221,6 +227,44 @@ function checkCollisions() {
 }
 
 // =============================================================================
+// SCORING SYSTEM
+// =============================================================================
+
+/**
+ * Add points to the score
+ */
+function addScore(points) {
+    score += points;
+    updateScoreDisplay();
+}
+
+/**
+ * Update the score display in the HTML
+ */
+function updateScoreDisplay() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('high-score').textContent = highScore;
+}
+
+/**
+ * Load high score from localStorage
+ */
+function loadHighScore() {
+    const saved = localStorage.getItem('snakeHighScore');
+    highScore = saved ? parseInt(saved, 10) : 0;
+}
+
+/**
+ * Save high score to localStorage
+ */
+function saveHighScore() {
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('snakeHighScore', highScore.toString());
+    }
+}
+
+// =============================================================================
 // DRAWING FUNCTIONS
 // =============================================================================
 
@@ -297,6 +341,8 @@ function startGame() {
     
     isGameRunning = true;
     isGameOver = false;
+    score = 0;  // Reset score
+    updateScoreDisplay();
     initSnake();
     spawnFood();  // Spawn first food
     draw();
@@ -324,7 +370,11 @@ function gameOver() {
     stopGame();
     isGameOver = true;
     
-    console.log('Game Over!');
+    // Save high score
+    saveHighScore();
+    updateScoreDisplay();
+    
+    console.log(`Game Over! Score: ${score}`);
     
     // Draw final state with game over message
     draw();
@@ -340,9 +390,18 @@ function drawGameOverScreen() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Game Over text
-    drawText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10, 10);
-    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 25, 6);
-    drawText('TO RESTART', canvas.width / 2, canvas.height / 2 + 40, 6);
+    drawText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30, 10);
+    
+    // Show score
+    drawText(`SCORE: ${score}`, canvas.width / 2, canvas.height / 2, 8);
+    
+    // Show if new high score
+    if (score >= highScore && score > 0) {
+        drawText('NEW HIGH!', canvas.width / 2, canvas.height / 2 + 18, 6);
+    }
+    
+    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 40, 6);
+    drawText('TO RESTART', canvas.width / 2, canvas.height / 2 + 55, 6);
 }
 
 // =============================================================================
@@ -412,11 +471,20 @@ function handleKeyDown(e) {
  * Initialize the game
  */
 function init() {
+    // Load high score from localStorage
+    loadHighScore();
+    updateScoreDisplay();
+    
     // Draw initial game board with start screen
     drawBoard();
     drawText('SNAKE', canvas.width / 2, canvas.height / 2 - 20, 16);
     drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 20, 6);
     drawText('TO START', canvas.width / 2, canvas.height / 2 + 35, 6);
+    
+    // Show high score on start screen if exists
+    if (highScore > 0) {
+        drawText(`HIGH: ${highScore}`, canvas.width / 2, canvas.height / 2 + 55, 6);
+    }
     
     // Add keyboard listener
     document.addEventListener('keydown', handleKeyDown);
