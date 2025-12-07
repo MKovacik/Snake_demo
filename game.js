@@ -38,6 +38,7 @@ let direction = CONFIG.INITIAL_DIRECTION;
 let nextDirection = CONFIG.INITIAL_DIRECTION;  // Queued direction for next tick
 let gameLoop = null;
 let isGameRunning = false;
+let isGameOver = false;
 
 // =============================================================================
 // CANVAS SETUP
@@ -185,6 +186,41 @@ function checkFoodCollision() {
 }
 
 // =============================================================================
+// COLLISION DETECTION
+// =============================================================================
+
+/**
+ * Check if the given position hits a wall
+ */
+function checkWallCollision(pos) {
+    return pos.x < 0 || pos.x >= CONFIG.GRID_SIZE ||
+           pos.y < 0 || pos.y >= CONFIG.GRID_SIZE;
+}
+
+/**
+ * Check if the snake head collides with its own body
+ */
+function checkSelfCollision() {
+    const head = snake[0];
+    // Check against all body segments (starting from index 1)
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Check all collision types
+ * @returns {boolean} true if any collision detected
+ */
+function checkCollisions() {
+    const head = snake[0];
+    return checkWallCollision(head) || checkSelfCollision();
+}
+
+// =============================================================================
 // DRAWING FUNCTIONS
 // =============================================================================
 
@@ -243,6 +279,13 @@ function draw() {
  */
 function update() {
     moveSnake();
+    
+    // Check for collisions after moving
+    if (checkCollisions()) {
+        gameOver();
+        return;
+    }
+    
     draw();
 }
 
@@ -253,6 +296,7 @@ function startGame() {
     if (isGameRunning) return;
     
     isGameRunning = true;
+    isGameOver = false;
     initSnake();
     spawnFood();  // Spawn first food
     draw();
@@ -271,6 +315,34 @@ function stopGame() {
         gameLoop = null;
     }
     isGameRunning = false;
+}
+
+/**
+ * Handle game over state
+ */
+function gameOver() {
+    stopGame();
+    isGameOver = true;
+    
+    console.log('Game Over!');
+    
+    // Draw final state with game over message
+    draw();
+    drawGameOverScreen();
+}
+
+/**
+ * Draw game over overlay
+ */
+function drawGameOverScreen() {
+    // Semi-transparent overlay
+    ctx.fillStyle = 'rgba(155, 188, 15, 0.85)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Game Over text
+    drawText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10, 10);
+    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 25, 6);
+    drawText('TO RESTART', canvas.width / 2, canvas.height / 2 + 40, 6);
 }
 
 // =============================================================================
@@ -323,7 +395,7 @@ function handleKeyDown(e) {
         return;
     }
     
-    // Space bar - Start game
+    // Space bar - Start/Restart game
     if (key === ' ' || key === 'Spacebar') {
         e.preventDefault();
         if (!isGameRunning) {
