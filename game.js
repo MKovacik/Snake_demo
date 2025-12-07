@@ -33,6 +33,7 @@ const CONFIG = {
 // =============================================================================
 
 let snake = [];                     // Array of {x, y} coordinates
+let food = null;                    // {x, y} coordinates of food
 let direction = CONFIG.INITIAL_DIRECTION;
 let nextDirection = CONFIG.INITIAL_DIRECTION;  // Queued direction for next tick
 let gameLoop = null;
@@ -78,6 +79,7 @@ function initSnake() {
 
 /**
  * Move the snake one cell in the current direction
+ * @returns {boolean} true if food was eaten
  */
 function moveSnake() {
     // Apply queued direction
@@ -96,8 +98,16 @@ function moveSnake() {
     // Add new head at the front
     snake.unshift(head);
     
+    // Check if snake ate food
+    if (checkFoodCollision()) {
+        // Don't remove tail - snake grows!
+        spawnFood();  // Spawn new food
+        return true;
+    }
+    
     // Remove tail (snake moves forward)
     snake.pop();
+    return false;
 }
 
 /**
@@ -117,6 +127,61 @@ function drawSnake() {
             CONFIG.CELL_SIZE - padding * 2
         );
     });
+}
+
+// =============================================================================
+// FOOD FUNCTIONS
+// =============================================================================
+
+/**
+ * Spawn food at a random valid position (not on snake)
+ */
+function spawnFood() {
+    const validPositions = [];
+    
+    // Find all valid positions (not occupied by snake)
+    for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
+        for (let y = 0; y < CONFIG.GRID_SIZE; y++) {
+            const isOnSnake = snake.some(segment => 
+                segment.x === x && segment.y === y
+            );
+            if (!isOnSnake) {
+                validPositions.push({ x, y });
+            }
+        }
+    }
+    
+    // Pick random valid position
+    if (validPositions.length > 0) {
+        const randomIndex = Math.floor(Math.random() * validPositions.length);
+        food = validPositions[randomIndex];
+    }
+}
+
+/**
+ * Draw the food on the canvas
+ */
+function drawFood() {
+    if (!food) return;
+    
+    ctx.fillStyle = CONFIG.COLORS.FOOD;
+    
+    // Draw food as a slightly smaller square (Nokia style)
+    const padding = 2;
+    ctx.fillRect(
+        food.x * CONFIG.CELL_SIZE + padding,
+        food.y * CONFIG.CELL_SIZE + padding,
+        CONFIG.CELL_SIZE - padding * 2,
+        CONFIG.CELL_SIZE - padding * 2
+    );
+}
+
+/**
+ * Check if snake head is at food position
+ */
+function checkFoodCollision() {
+    const head = snake[0];
+    return food && head.x === food.x && head.y === food.y;
 }
 
 // =============================================================================
@@ -165,6 +230,7 @@ function drawText(text, x, y, fontSize = 12) {
  */
 function draw() {
     drawBoard();
+    drawFood();
     drawSnake();
 }
 
@@ -188,6 +254,7 @@ function startGame() {
     
     isGameRunning = true;
     initSnake();
+    spawnFood();  // Spawn first food
     draw();
     
     // Start game loop
