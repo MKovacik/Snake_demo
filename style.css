@@ -1,9 +1,6 @@
-/* Nokia Snake Game - Authentic Nokia LCD Styling */
+/* Nokia Snake Game - Retro LCD Styling */
 
-/* =============================================================================
-   CSS RESET & BASE STYLES
-   ============================================================================= */
-
+/* CSS Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -16,75 +13,64 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     padding: 20px;
     overflow-x: hidden;
 }
 
-/* =============================================================================
-   NOKIA PHONE FRAME
-   ============================================================================= */
-
+/* Nokia Phone Container */
 .nokia-phone {
-    background: linear-gradient(180deg, #3d4f5f 0%, #2d3a45 50%, #1e272e 100%);
-    border-radius: 35px;
-    padding: 20px 15px;
+    background: linear-gradient(180deg, #2d3436 0%, #1e272e 100%);
+    border-radius: 30px;
+    padding: 15px;
     box-shadow: 
-        0 15px 40px rgba(0, 0, 0, 0.6),
-        inset 0 2px 4px rgba(255, 255, 255, 0.1),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-    border: 3px solid #4a5568;
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+    border: 3px solid #3d3d3d;
 }
 
-/* Phone speaker grill */
+/* Phone Speaker */
 .phone-speaker {
-    width: 50px;
-    height: 6px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        #1a1a1a 10%, 
-        #1a1a1a 90%, 
-        transparent 100%
-    );
-    margin: 5px auto 12px;
-    border-radius: 3px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+    width: 60px;
+    height: 8px;
+    background: #1a1a1a;
+    margin: 10px auto 15px;
+    border-radius: 4px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Nokia brand text */
+/* Nokia Brand */
 .nokia-brand {
     text-align: center;
-    color: #7fb3d5;
-    font-size: 12px;
-    letter-spacing: 5px;
-    margin-bottom: 12px;
-    text-shadow: 0 0 8px rgba(127, 179, 213, 0.4);
+    color: #5a9fd4;
+    font-size: 14px;
+    letter-spacing: 6px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(90, 159, 212, 0.5);
 }
 
-/* =============================================================================
-   SCREEN FRAME & LCD DISPLAY
-   ============================================================================= */
-
+/* Screen Frame */
 .screen-frame {
     background: #1a1a1a;
     border-radius: 8px;
-    padding: 8px;
+    padding: 10px;
     box-shadow: 
-        inset 0 3px 10px rgba(0, 0, 0, 0.9),
-        0 1px 0 rgba(255, 255, 255, 0.05);
+        inset 0 2px 10px rgba(0, 0, 0, 0.8),
+        0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* LCD screen container - the classic Nokia green */
+/* Screen Container - Nokia LCD Green */
 .screen-container {
     background: #9bbc0f;
-    border-radius: 3px;
-    padding: 6px;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
     position: relative;
 }
 
-/* LCD scanline effect */
+/* LCD Scanline Effect */
 .screen-container::before {
     content: '';
     position: absolute;
@@ -94,208 +80,166 @@ body {
     bottom: 0;
     background: repeating-linear-gradient(
         0deg,
-        rgba(0, 0, 0, 0.02),
-        rgba(0, 0, 0, 0.02) 1px,
+        rgba(0, 0, 0, 0.03),
+        rgba(0, 0, 0, 0.03) 1px,
         transparent 1px,
         transparent 2px
     );
     pointer-events: none;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
-/* =============================================================================
-   SCORE DISPLAY
-   ============================================================================= */
-
+/* Score Display */
 .score-display {
     display: flex;
     justify-content: space-between;
-    padding: 4px 8px;
-    font-size: 7px;
-    color: #0f380f;
-    margin-bottom: 4px;
-    background: rgba(155, 188, 15, 0.5);
-    border-radius: 2px;
+    padding: 5px 10px;
+    font-size: 8px;
+    color: #306230;
+    margin-bottom: 5px;
 }
 
-/* =============================================================================
-   GAME CANVAS
-   ============================================================================= */
-
+/* Game Canvas */
 #gameCanvas {
     display: block;
     background: #9bbc0f;
     border: 2px solid #306230;
-    border-radius: 2px;
-    /* Pixel-perfect rendering - no smoothing */
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    -ms-interpolation-mode: nearest-neighbor;
 }
 
-/* =============================================================================
-   D-PAD CONTROLS (Mobile)
-   ============================================================================= */
-
-.dpad-container {
-    margin-top: 15px;
+/* Controls Container */
+.controls-container {
+    margin-top: 20px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    justify-content: center;
 }
 
+/* D-Pad Styling */
 .dpad {
     display: grid;
-    grid-template-columns: repeat(3, 38px);
-    grid-template-rows: repeat(3, 38px);
-    gap: 3px;
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 2px;
 }
 
 .dpad-btn {
-    background: linear-gradient(180deg, #4a5568 0%, #2d3748 100%);
+    background: #3d3d3d;
     border: none;
-    border-radius: 6px;
-    color: #a0aec0;
+    border-radius: 5px;
+    color: #888;
     font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.1s ease;
     box-shadow: 
-        0 3px 0 #1a202c,
+        0 3px 0 #1a1a1a,
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 0.05s, box-shadow 0.05s;
 }
 
 .dpad-btn:active {
     transform: translateY(2px);
     box-shadow: 
-        0 1px 0 #1a202c,
+        0 1px 0 #1a1a1a,
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    background: linear-gradient(180deg, #3d4852 0%, #252d38 100%);
+}
+
+.dpad-center {
+    background: #2d2d2d;
+    border-radius: 50%;
+    cursor: default;
 }
 
 .dpad-up { grid-column: 2; grid-row: 1; }
 .dpad-left { grid-column: 1; grid-row: 2; }
-.dpad-center { 
-    grid-column: 2; 
-    grid-row: 2; 
-    background: #2d3748;
-    border-radius: 50%;
-}
+.dpad-center { grid-column: 2; grid-row: 2; }
 .dpad-right { grid-column: 3; grid-row: 2; }
 .dpad-down { grid-column: 2; grid-row: 3; }
 
-/* Action button (Start/Pause) */
-.action-btn {
-    background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
+/* Phone Buttons (Decorative) */
+.phone-buttons {
+    margin-top: 15px;
+    padding: 0 20px;
+}
+
+.phone-btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.phone-btn {
+    width: 45px;
+    height: 30px;
+    background: linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 100%);
     border: none;
-    border-radius: 20px;
-    color: white;
+    border-radius: 5px;
+    color: #888;
     font-family: 'Press Start 2P', cursive;
     font-size: 8px;
-    padding: 10px 25px;
     cursor: pointer;
     box-shadow: 
-        0 3px 0 #276749,
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform 0.05s, box-shadow 0.05s;
+        0 3px 0 #1a1a1a,
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.action-btn:active {
-    transform: translateY(2px);
-    box-shadow: 
-        0 1px 0 #276749,
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-/* Hide D-pad on desktop, show on touch devices */
-@media (hover: hover) and (pointer: fine) {
-    .dpad-container {
-        display: none;
-    }
-}
-
-/* Show D-pad on touch devices */
-@media (hover: none) and (pointer: coarse) {
-    .dpad-container {
-        display: flex;
-    }
-    
-    .instructions {
-        display: none;
-    }
-}
-
-/* =============================================================================
-   INSTRUCTIONS (Below phone)
-   ============================================================================= */
-
+/* Instructions */
 .instructions {
-    margin-top: 25px;
+    margin-top: 30px;
     text-align: center;
-    font-size: 7px;
     color: #666;
-    line-height: 2.5;
+    font-size: 8px;
+    line-height: 2;
 }
 
 .instructions strong {
     color: #9bbc0f;
 }
 
-/* =============================================================================
-   RESPONSIVE DESIGN
-   ============================================================================= */
-
-/* Tablets and smaller */
-@media (max-width: 500px) {
+/* Responsive Design */
+@media (max-width: 400px) {
     .nokia-phone {
-        border-radius: 25px;
-        padding: 15px 12px;
-    }
-    
-    .nokia-brand {
-        font-size: 10px;
-        letter-spacing: 4px;
-    }
-    
-    .screen-frame {
-        padding: 6px;
+        padding: 10px;
+        border-radius: 20px;
     }
     
     .screen-container {
-        padding: 4px;
+        padding: 5px;
     }
     
     .score-display {
         font-size: 6px;
-        padding: 3px 6px;
+        padding: 3px 5px;
     }
     
-    .controls-hint {
-        font-size: 5px;
+    .dpad {
+        grid-template-columns: repeat(3, 35px);
+        grid-template-rows: repeat(3, 35px);
+    }
+    
+    .phone-buttons {
+        display: none;
     }
     
     .instructions {
         font-size: 6px;
-        margin-top: 20px;
     }
 }
 
-/* Very small screens */
-@media (max-width: 320px) {
-    body {
-        padding: 10px;
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .dpad-btn {
+        font-size: 18px;
     }
     
-    .nokia-phone {
-        border-radius: 20px;
-        padding: 12px 10px;
+    .dpad {
+        grid-template-columns: repeat(3, 50px);
+        grid-template-rows: repeat(3, 50px);
     }
     
     .instructions {
@@ -303,27 +247,17 @@ body {
     }
 }
 
-/* =============================================================================
-   ANIMATIONS
-   ============================================================================= */
-
-/* Subtle screen flicker for authenticity (optional) */
-@keyframes lcd-flicker {
+/* Animation for game elements */
+@keyframes blink {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.98; }
+    50% { opacity: 0.7; }
 }
 
-.screen-container {
-    animation: lcd-flicker 4s infinite;
-}
-
-/* Shake animation for game over */
+/* Game Over animation */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-3px); }
-    40% { transform: translateX(3px); }
-    60% { transform: translateX(-3px); }
-    80% { transform: translateX(3px); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 .shake {

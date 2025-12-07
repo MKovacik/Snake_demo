@@ -14,8 +14,7 @@ Simply open `index.html` in any modern web browser - no build step or server req
 ## ✨ Features
 
 - **Authentic Nokia Experience**: Classic LCD green color scheme and pixelated aesthetics
-- **Nokia Phone Frame**: Realistic phone styling with speaker and branding
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Responsive Design**: Works on desktop and mobile devices
 - **Multiple Controls**:
   - ⌨️ Keyboard: Arrow keys or WASD
   - 📱 Touch: Swipe gestures or on-screen D-pad
@@ -25,7 +24,7 @@ Simply open `index.html` in any modern web browser - no build step or server req
 
 ## 🎯 How to Play
 
-1. **Start**: Press `SPACE`, tap the screen, or press the START button
+1. **Start**: Press `SPACE` or tap the screen to begin
 2. **Move**: Use arrow keys, WASD, swipe, or the D-pad to change direction
 3. **Eat**: Guide the snake to eat food (the small squares)
 4. **Grow**: Each food item makes your snake longer and increases your score
@@ -35,35 +34,34 @@ Simply open `index.html` in any modern web browser - no build step or server req
 ## 🏗️ Project Structure
 
 ```
-├── index.html    # Main HTML with Nokia phone frame
+├── index.html    # Main HTML entry point
 ├── style.css     # Nokia-style CSS styling
 ├── game.js       # Complete game logic
-└── README.md     # Documentation
+└── README.md     # This file
 ```
 
 ## 🛠️ Technical Details
 
 - **Rendering**: HTML5 Canvas with pixel-perfect rendering
 - **Game Loop**: `setInterval` with dynamic speed adjustment
-- **No Dependencies**: Pure vanilla JavaScript - no frameworks
+- **No Dependencies**: Pure vanilla JavaScript - no frameworks or libraries
 - **Storage**: `localStorage` for high score persistence
 
 ### Game Configuration
 
-Customize the game by modifying the `CONFIG` object in `game.js`:
+The game can be customized by modifying the `CONFIG` object in `game.js`:
 
 ```javascript
 const CONFIG = {
-    GRID_SIZE: 20,              // Grid cells
-    CELL_SIZE: 12,              // Pixels per cell
-    INITIAL_SNAKE_LENGTH: 4,    // Starting length
-    POINTS_PER_FOOD: 10,        // Points per food
-    SPEED_LEVELS: [             // Progressive difficulty
-        { threshold: 0,   speed: 150 },
-        { threshold: 50,  speed: 130 },
-        { threshold: 100, speed: 110 },
-        { threshold: 200, speed: 90 },
-        { threshold: 300, speed: 70 },
+    GRID_SIZE: 20,          // Number of cells
+    CELL_SIZE: 12,          // Pixels per cell
+    INITIAL_SNAKE_LENGTH: 4,
+    POINTS_PER_FOOD: 10,
+    // Speed levels for progressive difficulty
+    SPEED_LEVELS: [
+        { threshold: 0, speed: 150 },
+        { threshold: 50, speed: 130 },
+        // ... more levels
     ],
 };
 ```
@@ -76,39 +74,14 @@ The visual design replicates the iconic Nokia 3310 LCD display:
 - **Snake/Food**: `#0f380f` (dark green)
 - **Font**: "Press Start 2P" for authentic retro feel
 - **Phone Frame**: CSS recreation of Nokia phone aesthetics
-- **Scanline Effect**: Subtle LCD texture overlay
 
-## 📱 Mobile Support
-
-- Swipe controls for direction changes
-- On-screen D-pad for precise control
-- Action button for start/pause
-- Responsive layout adapts to screen size
-- Touch-optimized with no accidental scrolling
-
-## 📜 Browser Support
+## 📱 Browser Support
 
 - ✅ Chrome (recommended)
 - ✅ Firefox
 - ✅ Safari
 - ✅ Edge
 - ✅ Mobile browsers (iOS Safari, Chrome for Android)
-
-## 🔧 Issues Implemented
-
-This game was built addressing the following GitHub issues:
-
-- ✅ Issue #2: Project Infrastructure & Build Configuration
-- ✅ Issue #3: Game Board/Canvas with Nokia-Style Display
-- ✅ Issue #4: Snake Rendering & Movement
-- ✅ Issue #5: Player Controls (Keyboard & Touch)
-- ✅ Issue #6: Food/Apple Generation & Consumption
-- ✅ Issue #7: Collision Detection & Game Over
-- ✅ Issue #8: Scoring System
-- ✅ Issue #9: Game States (Start, Playing, Paused, Game Over)
-- ✅ Issue #10: Progressive Difficulty (Speed Increase)
-- ✅ Issue #11: Nokia Visual Design & Styling
-- ✅ Issue #12: Responsive Design & Mobile Support
 
 ## 📜 License
 
