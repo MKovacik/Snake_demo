@@ -12,15 +12,30 @@ const CONFIG = {
     GRID_SIZE: 20,          // Number of cells in each direction
     CELL_SIZE: 12,          // Size of each cell in pixels
     
+    // Snake settings
+    INITIAL_SNAKE_LENGTH: 4,
+    INITIAL_DIRECTION: 'RIGHT',
+    GAME_SPEED: 150,        // Milliseconds per move (Nokia feel)
+    
     // Nokia LCD Color Scheme
     COLORS: {
         BACKGROUND: '#9bbc0f',      // Light LCD green
         GRID: '#8bac0f',            // Subtle grid lines
         SNAKE: '#0f380f',           // Dark green (snake body)
+        SNAKE_HEAD: '#306230',      // Slightly lighter for head
         FOOD: '#0f380f',            // Same as snake
         TEXT: '#0f380f',            // Text color
     },
 };
+
+// =============================================================================
+// GAME STATE
+// =============================================================================
+
+let snake = [];                     // Array of {x, y} coordinates
+let direction = CONFIG.INITIAL_DIRECTION;
+let gameLoop = null;
+let isGameRunning = false;
 
 // =============================================================================
 // CANVAS SETUP
@@ -35,6 +50,69 @@ canvas.height = CONFIG.GRID_SIZE * CONFIG.CELL_SIZE;
 
 // Disable image smoothing for crisp pixel rendering
 ctx.imageSmoothingEnabled = false;
+
+// =============================================================================
+// SNAKE FUNCTIONS
+// =============================================================================
+
+/**
+ * Initialize the snake at the center of the board
+ */
+function initSnake() {
+    snake = [];
+    const startX = Math.floor(CONFIG.GRID_SIZE / 2);
+    const startY = Math.floor(CONFIG.GRID_SIZE / 2);
+    
+    // Create snake segments from head to tail (moving right, so tail is to the left)
+    for (let i = 0; i < CONFIG.INITIAL_SNAKE_LENGTH; i++) {
+        snake.push({
+            x: startX - i,
+            y: startY
+        });
+    }
+    
+    direction = CONFIG.INITIAL_DIRECTION;
+}
+
+/**
+ * Move the snake one cell in the current direction
+ */
+function moveSnake() {
+    // Calculate new head position
+    const head = { ...snake[0] };
+    
+    switch (direction) {
+        case 'UP':    head.y--; break;
+        case 'DOWN':  head.y++; break;
+        case 'LEFT':  head.x--; break;
+        case 'RIGHT': head.x++; break;
+    }
+    
+    // Add new head at the front
+    snake.unshift(head);
+    
+    // Remove tail (snake moves forward)
+    snake.pop();
+}
+
+/**
+ * Draw the snake on the canvas
+ */
+function drawSnake() {
+    snake.forEach((segment, index) => {
+        // Head is slightly different color
+        ctx.fillStyle = index === 0 ? CONFIG.COLORS.SNAKE_HEAD : CONFIG.COLORS.SNAKE;
+        
+        // Draw segment with small padding for grid visibility
+        const padding = 1;
+        ctx.fillRect(
+            segment.x * CONFIG.CELL_SIZE + padding,
+            segment.y * CONFIG.CELL_SIZE + padding,
+            CONFIG.CELL_SIZE - padding * 2,
+            CONFIG.CELL_SIZE - padding * 2
+        );
+    });
+}
 
 // =============================================================================
 // DRAWING FUNCTIONS
@@ -77,23 +155,86 @@ function drawText(text, x, y, fontSize = 12) {
     ctx.fillText(text, x, y);
 }
 
+/**
+ * Main draw function - renders entire game
+ */
+function draw() {
+    drawBoard();
+    drawSnake();
+}
+
+// =============================================================================
+// GAME LOOP
+// =============================================================================
+
+/**
+ * Main game update - called every game tick
+ */
+function update() {
+    moveSnake();
+    draw();
+}
+
+/**
+ * Start the game loop
+ */
+function startGame() {
+    if (isGameRunning) return;
+    
+    isGameRunning = true;
+    initSnake();
+    draw();
+    
+    // Start game loop
+    gameLoop = setInterval(update, CONFIG.GAME_SPEED);
+    console.log('Game started - snake is moving!');
+}
+
+/**
+ * Stop the game loop
+ */
+function stopGame() {
+    if (gameLoop) {
+        clearInterval(gameLoop);
+        gameLoop = null;
+    }
+    isGameRunning = false;
+}
+
+// =============================================================================
+// INPUT HANDLING
+// =============================================================================
+
+/**
+ * Handle keyboard input for starting game
+ */
+function handleKeyDown(e) {
+    if (e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        if (!isGameRunning) {
+            startGame();
+        }
+    }
+}
+
 // =============================================================================
 // INITIALIZATION
 // =============================================================================
 
 /**
- * Initialize the game board
+ * Initialize the game
  */
 function init() {
-    // Draw initial game board
+    // Draw initial game board with start screen
     drawBoard();
-    
-    // Draw title text
     drawText('SNAKE', canvas.width / 2, canvas.height / 2 - 20, 16);
     drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 20, 6);
     drawText('TO START', canvas.width / 2, canvas.height / 2 + 35, 6);
     
-    console.log('Nokia Snake game board initialized.');
+    // Add keyboard listener
+    document.addEventListener('keydown', handleKeyDown);
+    
+    console.log('Nokia Snake game initialized. Press SPACE to start.');
 }
 
 // Initialize when DOM is loaded
