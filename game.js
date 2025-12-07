@@ -32,7 +32,18 @@ const CONFIG = {
 };
 
 // =============================================================================
-// GAME STATE
+// GAME STATES
+// =============================================================================
+
+const GameState = {
+    START: 'start',
+    PLAYING: 'playing',
+    PAUSED: 'paused',
+    GAME_OVER: 'gameover',
+};
+
+// =============================================================================
+// GAME STATE VARIABLES
 // =============================================================================
 
 let snake = [];                     // Array of {x, y} coordinates
@@ -40,8 +51,7 @@ let food = null;                    // {x, y} coordinates of food
 let direction = CONFIG.INITIAL_DIRECTION;
 let nextDirection = CONFIG.INITIAL_DIRECTION;  // Queued direction for next tick
 let gameLoop = null;
-let isGameRunning = false;
-let isGameOver = false;
+let gameState = GameState.START;    // Current game state
 let score = 0;                      // Current game score
 let highScore = 0;                  // Best score (persisted)
 
@@ -315,18 +325,20 @@ function draw() {
 }
 
 // =============================================================================
-// GAME LOOP
+// GAME LOOP & STATE MANAGEMENT
 // =============================================================================
 
 /**
  * Main game update - called every game tick
  */
 function update() {
+    if (gameState !== GameState.PLAYING) return;
+    
     moveSnake();
     
     // Check for collisions after moving
     if (checkCollisions()) {
-        gameOver();
+        handleGameOver();
         return;
     }
     
@@ -334,41 +346,84 @@ function update() {
 }
 
 /**
- * Start the game loop
+ * Start a new game
  */
 function startGame() {
-    if (isGameRunning) return;
-    
-    isGameRunning = true;
-    isGameOver = false;
-    score = 0;  // Reset score
+    gameState = GameState.PLAYING;
+    score = 0;
     updateScoreDisplay();
     initSnake();
-    spawnFood();  // Spawn first food
+    spawnFood();
     draw();
     
     // Start game loop
-    gameLoop = setInterval(update, CONFIG.GAME_SPEED);
-    console.log('Game started - snake is moving!');
+    startGameLoop();
+    console.log('Game started!');
 }
 
 /**
- * Stop the game loop
+ * Start the game loop interval
  */
-function stopGame() {
+function startGameLoop() {
+    if (gameLoop) clearInterval(gameLoop);
+    gameLoop = setInterval(update, CONFIG.GAME_SPEED);
+}
+
+/**
+ * Stop the game loop interval
+ */
+function stopGameLoop() {
     if (gameLoop) {
         clearInterval(gameLoop);
         gameLoop = null;
     }
-    isGameRunning = false;
+}
+
+/**
+ * Pause the game
+ */
+function pauseGame() {
+    if (gameState !== GameState.PLAYING) return;
+    
+    gameState = GameState.PAUSED;
+    stopGameLoop();
+    
+    // Draw pause overlay
+    draw();
+    drawPauseScreen();
+    
+    console.log('Game paused');
+}
+
+/**
+ * Resume the game from pause
+ */
+function resumeGame() {
+    if (gameState !== GameState.PAUSED) return;
+    
+    gameState = GameState.PLAYING;
+    startGameLoop();
+    
+    console.log('Game resumed');
+}
+
+/**
+ * Toggle pause state
+ */
+function togglePause() {
+    if (gameState === GameState.PLAYING) {
+        pauseGame();
+    } else if (gameState === GameState.PAUSED) {
+        resumeGame();
+    }
 }
 
 /**
  * Handle game over state
  */
-function gameOver() {
-    stopGame();
-    isGameOver = true;
+function handleGameOver() {
+    stopGameLoop();
+    gameState = GameState.GAME_OVER;
     
     // Save high score
     saveHighScore();
@@ -379,6 +434,33 @@ function gameOver() {
     // Draw final state with game over message
     draw();
     drawGameOverScreen();
+}
+
+/**
+ * Draw start screen
+ */
+function drawStartScreen() {
+    drawBoard();
+    drawText('SNAKE', canvas.width / 2, canvas.height / 2 - 20, 16);
+    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 20, 6);
+    drawText('TO START', canvas.width / 2, canvas.height / 2 + 35, 6);
+    
+    if (highScore > 0) {
+        drawText(`HIGH: ${highScore}`, canvas.width / 2, canvas.height / 2 + 55, 6);
+    }
+}
+
+/**
+ * Draw pause overlay
+ */
+function drawPauseScreen() {
+    // Semi-transparent overlay
+    ctx.fillStyle = 'rgba(155, 188, 15, 0.8)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    drawText('PAUSED', canvas.width / 2, canvas.height / 2 - 10, 12);
+    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 20, 6);
+    drawText('TO CONTINUE', canvas.width / 2, canvas.height / 2 + 35, 6);
 }
 
 /**
@@ -440,26 +522,49 @@ function setDirection(newDirection) {
 }
 
 /**
- * Handle keyboard input
+ * Handle keyboard input based on current game state
  */
 function handleKeyDown(e) {
     const key = e.key;
     
-    // Direction controls (Arrow keys and WASD)
+    // Direction controls (Arrow keys and WASD) - only when playing
     if (DIRECTION_KEYS[key]) {
         e.preventDefault();
-        if (isGameRunning) {
+        if (gameState === GameState.PLAYING) {
             setDirection(DIRECTION_KEYS[key]);
         }
         return;
     }
     
-    // Space bar - Start/Restart game
+    // Space bar - context-dependent action
     if (key === ' ' || key === 'Spacebar') {
         e.preventDefault();
-        if (!isGameRunning) {
+        handleSpaceBar();
+        return;
+    }
+    
+    // P key - pause/resume
+    if (key === 'p' || key === 'P') {
+        e.preventDefault();
+        togglePause();
+    }
+}
+
+/**
+ * Handle space bar press based on game state
+ */
+function handleSpaceBar() {
+    switch (gameState) {
+        case GameState.START:
+        case GameState.GAME_OVER:
             startGame();
-        }
+            break;
+        case GameState.PLAYING:
+            pauseGame();
+            break;
+        case GameState.PAUSED:
+            resumeGame();
+            break;
     }
 }
 
@@ -475,16 +580,9 @@ function init() {
     loadHighScore();
     updateScoreDisplay();
     
-    // Draw initial game board with start screen
-    drawBoard();
-    drawText('SNAKE', canvas.width / 2, canvas.height / 2 - 20, 16);
-    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 20, 6);
-    drawText('TO START', canvas.width / 2, canvas.height / 2 + 35, 6);
-    
-    // Show high score on start screen if exists
-    if (highScore > 0) {
-        drawText(`HIGH: ${highScore}`, canvas.width / 2, canvas.height / 2 + 55, 6);
-    }
+    // Set initial state and draw start screen
+    gameState = GameState.START;
+    drawStartScreen();
     
     // Add keyboard listener
     document.addEventListener('keydown', handleKeyDown);
