@@ -8,6 +8,7 @@
  * - Progressive difficulty (speed increases with score)
  * - High score persistence using localStorage
  * - Game states: Start, Playing, Paused, Game Over
+ * - Retro 8-bit sound effects (optional)
  */
 
 // =============================================================================
@@ -59,6 +60,150 @@ const GameState = {
 };
 
 // =============================================================================
+// SOUND MANAGER CLASS
+// =============================================================================
+
+class SoundManager {
+    constructor() {
+        this.audioContext = null;
+        this.enabled = this.loadSoundPreference();
+    }
+    
+    /**
+     * Initialize audio context (must be called after user interaction)
+     */
+    initAudioContext() {
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        // Resume if suspended (browser autoplay policy)
+        if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+    }
+    
+    /**
+     * Play a beep sound with specified frequency and duration
+     */
+    beep(frequency, duration, type = 'square') {
+        if (!this.enabled || !this.audioContext) return;
+        
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = type;
+            oscillator.frequency.value = frequency;
+            
+            // Set volume (not too loud)
+            gainNode.gain.value = 0.1;
+            
+            // Fade out to avoid click
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + duration / 1000);
+        } catch (e) {
+            // Silently fail if audio doesn't work
+            console.warn('Sound playback failed:', e);
+        }
+    }
+    
+    /**
+     * Play eating food sound - short high-pitched beep
+     */
+    playEat() {
+        this.beep(880, 50, 'square'); // A5 note, 50ms
+    }
+    
+    /**
+     * Play game over sound - descending tone
+     */
+    playGameOver() {
+        if (!this.enabled || !this.audioContext) return;
+        
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = 'square';
+            oscillator.frequency.value = 440; // A4
+            
+            // Descending frequency
+            oscillator.frequency.exponentialRampToValueAtTime(110, this.audioContext.currentTime + 0.3);
+            
+            gainNode.gain.value = 0.1;
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + 0.3);
+        } catch (e) {
+            console.warn('Sound playback failed:', e);
+        }
+    }
+    
+    /**
+     * Play game start sound - ascending tone
+     */
+    playStart() {
+        if (!this.enabled || !this.audioContext) return;
+        
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = 'square';
+            oscillator.frequency.value = 220; // A3
+            
+            // Ascending frequency
+            oscillator.frequency.exponentialRampToValueAtTime(440, this.audioContext.currentTime + 0.15);
+            
+            gainNode.gain.value = 0.1;
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + 0.15);
+        } catch (e) {
+            console.warn('Sound playback failed:', e);
+        }
+    }
+    
+    /**
+     * Toggle sound on/off
+     */
+    toggle() {
+        this.enabled = !this.enabled;
+        this.saveSoundPreference();
+        return this.enabled;
+    }
+    
+    /**
+     * Load sound preference from localStorage
+     */
+    loadSoundPreference() {
+        const saved = localStorage.getItem('snakeSoundEnabled');
+        // Default to false (sound off) to respect user preference
+        return saved === 'true';
+    }
+    
+    /**
+     * Save sound preference to localStorage
+     */
+    saveSoundPreference() {
+        localStorage.setItem('snakeSoundEnabled', this.enabled.toString());
+    }
+}
+
+// =============================================================================
 // GAME CLASS
 // =============================================================================
 
@@ -95,6 +240,9 @@ class SnakeGame {
         // Input handling
         this.directionQueue = [];
         
+        // Sound manager
+        this.sound = new SoundManager();
+        
         // Initialize
         this.init();
     }
@@ -109,8 +257,40 @@ class SnakeGame {
         // Set up event listeners
         this.setupEventListeners();
         
+        // Set up sound toggle button
+        this.setupSoundToggle();
+        
         // Draw initial start screen
         this.drawStartScreen();
+    }
+    
+    /**
+     * Set up sound toggle button
+     */
+    setupSoundToggle() {
+        const soundBtn = document.getElementById('btn-sound');
+        if (soundBtn) {
+            // Update initial state
+            this.updateSoundButtonDisplay();
+            
+            soundBtn.addEventListener('click', () => {
+                // Initialize audio context on first interaction
+                this.sound.initAudioContext();
+                this.sound.toggle();
+                this.updateSoundButtonDisplay();
+            });
+        }
+    }
+    
+    /**
+     * Update sound button display
+     */
+    updateSoundButtonDisplay() {
+        const soundBtn = document.getElementById('btn-sound');
+        if (soundBtn) {
+            soundBtn.textContent = this.sound.enabled ? '🔊' : '🔇';
+            soundBtn.title = this.sound.enabled ? 'Sound On (click to mute)' : 'Sound Off (click to unmute)';
+        }
     }
     
     /**
@@ -271,6 +451,9 @@ class SnakeGame {
      * Start a new game
      */
     startGame() {
+        // Initialize audio context on user interaction
+        this.sound.initAudioContext();
+        
         // Reset game state
         this.state = GameState.PLAYING;
         this.score = 0;
@@ -287,6 +470,9 @@ class SnakeGame {
         
         // Update display
         this.updateScoreDisplay();
+        
+        // Play start sound
+        this.sound.playStart();
         
         // Start game loop
         this.startGameLoop();
@@ -451,6 +637,9 @@ class SnakeGame {
      * Handle eating food
      */
     eatFood() {
+        // Play eat sound
+        this.sound.playEat();
+        
         // Increase score
         this.score += CONFIG.POINTS_PER_FOOD;
         this.updateScoreDisplay();
@@ -469,6 +658,9 @@ class SnakeGame {
         this.state = GameState.GAME_OVER;
         clearInterval(this.gameLoop);
         this.gameLoop = null;
+        
+        // Play game over sound
+        this.sound.playGameOver();
         
         // Update high score
         if (this.score > this.highScore) {
