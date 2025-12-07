@@ -1,0 +1,265 @@
+/* Nokia Snake Game - Retro LCD Styling */
+
+/* CSS Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* Nokia Phone Container */
+.nokia-phone {
+    background: linear-gradient(180deg, #2d3436 0%, #1e272e 100%);
+    border-radius: 30px;
+    padding: 15px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+    border: 3px solid #3d3d3d;
+}
+
+/* Phone Speaker */
+.phone-speaker {
+    width: 60px;
+    height: 8px;
+    background: #1a1a1a;
+    margin: 10px auto 15px;
+    border-radius: 4px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Nokia Brand */
+.nokia-brand {
+    text-align: center;
+    color: #5a9fd4;
+    font-size: 14px;
+    letter-spacing: 6px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(90, 159, 212, 0.5);
+}
+
+/* Screen Frame */
+.screen-frame {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.8),
+        0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Screen Container - Nokia LCD Green */
+.screen-container {
+    background: #9bbc0f;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+/* LCD Scanline Effect */
+.screen-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.03),
+        rgba(0, 0, 0, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+/* Score Display */
+.score-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    font-size: 8px;
+    color: #306230;
+    margin-bottom: 5px;
+}
+
+/* Game Canvas */
+#gameCanvas {
+    display: block;
+    background: #9bbc0f;
+    border: 2px solid #306230;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Controls Container */
+.controls-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* D-Pad Styling */
+.dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 2px;
+}
+
+.dpad-btn {
+    background: #3d3d3d;
+    border: none;
+    border-radius: 5px;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
+    box-shadow: 
+        0 3px 0 #1a1a1a,
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dpad-btn:active {
+    transform: translateY(2px);
+    box-shadow: 
+        0 1px 0 #1a1a1a,
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dpad-center {
+    background: #2d2d2d;
+    border-radius: 50%;
+    cursor: default;
+}
+
+.dpad-up { grid-column: 2; grid-row: 1; }
+.dpad-left { grid-column: 1; grid-row: 2; }
+.dpad-center { grid-column: 2; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+.dpad-down { grid-column: 2; grid-row: 3; }
+
+/* Phone Buttons (Decorative) */
+.phone-buttons {
+    margin-top: 15px;
+    padding: 0 20px;
+}
+
+.phone-btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.phone-btn {
+    width: 45px;
+    height: 30px;
+    background: linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 100%);
+    border: none;
+    border-radius: 5px;
+    color: #888;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    cursor: pointer;
+    box-shadow: 
+        0 3px 0 #1a1a1a,
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Instructions */
+.instructions {
+    margin-top: 30px;
+    text-align: center;
+    color: #666;
+    font-size: 8px;
+    line-height: 2;
+}
+
+.instructions strong {
+    color: #9bbc0f;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+    .nokia-phone {
+        padding: 10px;
+        border-radius: 20px;
+    }
+    
+    .screen-container {
+        padding: 5px;
+    }
+    
+    .score-display {
+        font-size: 6px;
+        padding: 3px 5px;
+    }
+    
+    .dpad {
+        grid-template-columns: repeat(3, 35px);
+        grid-template-rows: repeat(3, 35px);
+    }
+    
+    .phone-buttons {
+        display: none;
+    }
+    
+    .instructions {
+        font-size: 6px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .dpad-btn {
+        font-size: 18px;
+    }
+    
+    .dpad {
+        grid-template-columns: repeat(3, 50px);
+        grid-template-rows: repeat(3, 50px);
+    }
+    
+    .instructions {
+        display: none;
+    }
+}
+
+/* Animation for game elements */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Game Over animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.3s ease-in-out;
+}
