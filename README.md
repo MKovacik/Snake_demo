@@ -9,7 +9,9 @@ A browser-based recreation of the classic Nokia Snake game, built with vanilla H
 
 ## 🎮 Play the Game
 
-Simply open `index.html` in any modern web browser - no build step or server required!
+**🌐 [Play Online](https://mkovacik.github.io/Snake_demo)** - No download required!
+
+Or clone the repo and open `index.html` in any modern web browser - no build step or server required!
 
 ## ✨ Features
 
