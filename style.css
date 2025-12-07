@@ -93,10 +93,32 @@ body {
 .score-display {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 5px 10px;
     font-size: 8px;
     color: #306230;
     margin-bottom: 5px;
+}
+
+/* Sound Toggle Button */
+.sound-toggle {
+    background: transparent;
+    border: 1px solid #306230;
+    border-radius: 3px;
+    color: #306230;
+    font-size: 10px;
+    padding: 2px 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.sound-toggle:hover {
+    background: rgba(48, 98, 48, 0.2);
+}
+
+.sound-toggle:active {
+    transform: scale(0.95);
 }
 
 /* Game Canvas */
