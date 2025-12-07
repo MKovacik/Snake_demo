@@ -408,6 +408,7 @@ function startGame() {
     
     // Start game loop
     startGameLoop();
+    updateActionButton();
     console.log('Game started!');
 }
 
@@ -441,6 +442,7 @@ function pauseGame() {
     // Draw pause overlay
     draw();
     drawPauseScreen();
+    updateActionButton();
     
     console.log('Game paused');
 }
@@ -453,6 +455,7 @@ function resumeGame() {
     
     gameState = GameState.PLAYING;
     startGameLoop();
+    updateActionButton();
     
     console.log('Game resumed');
 }
@@ -478,6 +481,7 @@ function handleGameOver() {
     // Save high score
     saveHighScore();
     updateScoreDisplay();
+    updateActionButton();
     
     console.log(`Game Over! Score: ${score}`);
     
@@ -492,8 +496,8 @@ function handleGameOver() {
 function drawStartScreen() {
     drawBoard();
     drawText('SNAKE', canvas.width / 2, canvas.height / 2 - 20, 16);
-    drawText('PRESS SPACE', canvas.width / 2, canvas.height / 2 + 20, 6);
-    drawText('TO START', canvas.width / 2, canvas.height / 2 + 35, 6);
+    drawText('TAP OR PRESS', canvas.width / 2, canvas.height / 2 + 20, 6);
+    drawText('SPACE TO START', canvas.width / 2, canvas.height / 2 + 35, 6);
     
     if (highScore > 0) {
         drawText(`HIGH: ${highScore}`, canvas.width / 2, canvas.height / 2 + 55, 6);
@@ -619,6 +623,122 @@ function handleSpaceBar() {
 }
 
 // =============================================================================
+// TOUCH & MOBILE CONTROLS
+// =============================================================================
+
+/**
+ * Set up touch/swipe controls for mobile
+ */
+function setupTouchControls() {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const minSwipeDistance = 30;
+    
+    // Swipe controls on canvas
+    canvas.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    canvas.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+        
+        // Determine swipe direction
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > minSwipeDistance) {
+            // Horizontal swipe
+            if (gameState === GameState.PLAYING) {
+                setDirection(dx > 0 ? 'RIGHT' : 'LEFT');
+            }
+        } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > minSwipeDistance) {
+            // Vertical swipe
+            if (gameState === GameState.PLAYING) {
+                setDirection(dy > 0 ? 'DOWN' : 'UP');
+            }
+        } else {
+            // Tap (no swipe) - treat as action button
+            handleSpaceBar();
+        }
+    }, { passive: true });
+    
+    // Prevent scrolling when touching the canvas
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+}
+
+/**
+ * Set up D-pad button controls
+ */
+function setupDpadControls() {
+    const btnUp = document.getElementById('btn-up');
+    const btnDown = document.getElementById('btn-down');
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    const btnAction = document.getElementById('btn-action');
+    
+    // Direction buttons
+    const addDpadListener = (btn, dir) => {
+        if (!btn) return;
+        
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameState === GameState.PLAYING) {
+                setDirection(dir);
+            }
+        });
+        
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (gameState === GameState.PLAYING) {
+                setDirection(dir);
+            }
+        });
+    };
+    
+    addDpadListener(btnUp, 'UP');
+    addDpadListener(btnDown, 'DOWN');
+    addDpadListener(btnLeft, 'LEFT');
+    addDpadListener(btnRight, 'RIGHT');
+    
+    // Action button (Start/Pause)
+    if (btnAction) {
+        const handleAction = (e) => {
+            e.preventDefault();
+            handleSpaceBar();
+            updateActionButton();
+        };
+        
+        btnAction.addEventListener('touchstart', handleAction);
+        btnAction.addEventListener('click', handleAction);
+    }
+}
+
+/**
+ * Update action button text based on game state
+ */
+function updateActionButton() {
+    const btnAction = document.getElementById('btn-action');
+    if (!btnAction) return;
+    
+    switch (gameState) {
+        case GameState.START:
+        case GameState.GAME_OVER:
+            btnAction.textContent = 'START';
+            break;
+        case GameState.PLAYING:
+            btnAction.textContent = 'PAUSE';
+            break;
+        case GameState.PAUSED:
+            btnAction.textContent = 'RESUME';
+            break;
+    }
+}
+
+// =============================================================================
 // INITIALIZATION
 // =============================================================================
 
@@ -637,7 +757,12 @@ function init() {
     // Add keyboard listener
     document.addEventListener('keydown', handleKeyDown);
     
-    console.log('Nokia Snake game initialized. Press SPACE to start.');
+    // Set up touch/mobile controls
+    setupTouchControls();
+    setupDpadControls();
+    updateActionButton();
+    
+    console.log('Nokia Snake game initialized. Press SPACE or tap to start.');
 }
 
 // Initialize when DOM is loaded

@@ -134,15 +134,102 @@ body {
 }
 
 /* =============================================================================
-   PHONE CONTROLS HINT
+   D-PAD CONTROLS (Mobile)
    ============================================================================= */
 
-.controls-hint {
+.dpad-container {
     margin-top: 15px;
-    text-align: center;
-    font-size: 6px;
-    color: #7fb3d5;
-    letter-spacing: 1px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 38px);
+    grid-template-rows: repeat(3, 38px);
+    gap: 3px;
+}
+
+.dpad-btn {
+    background: linear-gradient(180deg, #4a5568 0%, #2d3748 100%);
+    border: none;
+    border-radius: 6px;
+    color: #a0aec0;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 3px 0 #1a202c,
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.05s, box-shadow 0.05s;
+}
+
+.dpad-btn:active {
+    transform: translateY(2px);
+    box-shadow: 
+        0 1px 0 #1a202c,
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: linear-gradient(180deg, #3d4852 0%, #252d38 100%);
+}
+
+.dpad-up { grid-column: 2; grid-row: 1; }
+.dpad-left { grid-column: 1; grid-row: 2; }
+.dpad-center { 
+    grid-column: 2; 
+    grid-row: 2; 
+    background: #2d3748;
+    border-radius: 50%;
+}
+.dpad-right { grid-column: 3; grid-row: 2; }
+.dpad-down { grid-column: 2; grid-row: 3; }
+
+/* Action button (Start/Pause) */
+.action-btn {
+    background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    padding: 10px 25px;
+    cursor: pointer;
+    box-shadow: 
+        0 3px 0 #276749,
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.05s, box-shadow 0.05s;
+}
+
+.action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 
+        0 1px 0 #276749,
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Hide D-pad on desktop, show on touch devices */
+@media (hover: hover) and (pointer: fine) {
+    .dpad-container {
+        display: none;
+    }
+}
+
+/* Show D-pad on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .dpad-container {
+        display: flex;
+    }
+    
+    .instructions {
+        display: none;
+    }
 }
 
 /* =============================================================================

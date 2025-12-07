@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nokia Snake Game</title>
     <!-- Retro pixel font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,16 +32,23 @@
             </div>
         </div>
         
-        <!-- Phone controls hint -->
-        <div class="controls-hint">
-            <span>SPACE: Start/Pause</span>
+        <!-- D-Pad controls for mobile -->
+        <div class="dpad-container">
+            <div class="dpad">
+                <button class="dpad-btn dpad-up" id="btn-up" aria-label="Up">▲</button>
+                <button class="dpad-btn dpad-left" id="btn-left" aria-label="Left">◀</button>
+                <div class="dpad-center"></div>
+                <button class="dpad-btn dpad-right" id="btn-right" aria-label="Right">▶</button>
+                <button class="dpad-btn dpad-down" id="btn-down" aria-label="Down">▼</button>
+            </div>
+            <button class="action-btn" id="btn-action">START</button>
         </div>
     </div>
     
     <!-- Instructions (desktop only) -->
     <div class="instructions">
         <p>Use <strong>Arrow Keys</strong> or <strong>WASD</strong> to move</p>
-        <p>Press <strong>SPACE</strong> to Start / Pause</p>
+        <p>Press <strong>SPACE</strong> or <strong>P</strong> to Pause</p>
     </div>
     
     <script src="game.js"></script>
