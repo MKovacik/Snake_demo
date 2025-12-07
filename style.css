@@ -1,50 +1,244 @@
-/* Nokia Snake Game - Nokia LCD Styling */
+/* Nokia Snake Game - Authentic Nokia LCD Styling */
 
-/* CSS Reset */
+/* =============================================================================
+   CSS RESET & BASE STYLES
+   ============================================================================= */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Base body - dark background like phone body */
 body {
     font-family: 'Press Start 2P', cursive;
-    background-color: #1a1a2e;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+    overflow-x: hidden;
 }
 
-/* Game container - Nokia LCD screen frame */
-.game-container {
-    background: #2d3436;
-    border-radius: 10px;
-    padding: 15px;
+/* =============================================================================
+   NOKIA PHONE FRAME
+   ============================================================================= */
+
+.nokia-phone {
+    background: linear-gradient(180deg, #3d4f5f 0%, #2d3a45 50%, #1e272e 100%);
+    border-radius: 35px;
+    padding: 20px 15px;
     box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.5),
-        inset 0 2px 3px rgba(255, 255, 255, 0.1);
+        0 15px 40px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    border: 3px solid #4a5568;
 }
 
-/* Score display - top of LCD screen */
+/* Phone speaker grill */
+.phone-speaker {
+    width: 50px;
+    height: 6px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        #1a1a1a 10%, 
+        #1a1a1a 90%, 
+        transparent 100%
+    );
+    margin: 5px auto 12px;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Nokia brand text */
+.nokia-brand {
+    text-align: center;
+    color: #7fb3d5;
+    font-size: 12px;
+    letter-spacing: 5px;
+    margin-bottom: 12px;
+    text-shadow: 0 0 8px rgba(127, 179, 213, 0.4);
+}
+
+/* =============================================================================
+   SCREEN FRAME & LCD DISPLAY
+   ============================================================================= */
+
+.screen-frame {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 
+        inset 0 3px 10px rgba(0, 0, 0, 0.9),
+        0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* LCD screen container - the classic Nokia green */
+.screen-container {
+    background: #9bbc0f;
+    border-radius: 3px;
+    padding: 6px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+/* LCD scanline effect */
+.screen-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.02),
+        rgba(0, 0, 0, 0.02) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    border-radius: 3px;
+}
+
+/* =============================================================================
+   SCORE DISPLAY
+   ============================================================================= */
+
 .score-display {
     display: flex;
     justify-content: space-between;
-    padding: 8px 10px;
-    background: #9bbc0f;
-    border: 2px solid #306230;
-    border-bottom: none;
-    font-size: 8px;
+    padding: 4px 8px;
+    font-size: 7px;
     color: #0f380f;
+    margin-bottom: 4px;
+    background: rgba(155, 188, 15, 0.5);
+    border-radius: 2px;
 }
 
-/* Game canvas - Nokia LCD green display */
+/* =============================================================================
+   GAME CANVAS
+   ============================================================================= */
+
 #gameCanvas {
     display: block;
     background: #9bbc0f;
     border: 2px solid #306230;
-    /* Pixel-perfect rendering */
+    border-radius: 2px;
+    /* Pixel-perfect rendering - no smoothing */
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+}
+
+/* =============================================================================
+   PHONE CONTROLS HINT
+   ============================================================================= */
+
+.controls-hint {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 6px;
+    color: #7fb3d5;
+    letter-spacing: 1px;
+}
+
+/* =============================================================================
+   INSTRUCTIONS (Below phone)
+   ============================================================================= */
+
+.instructions {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 7px;
+    color: #666;
+    line-height: 2.5;
+}
+
+.instructions strong {
+    color: #9bbc0f;
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================= */
+
+/* Tablets and smaller */
+@media (max-width: 500px) {
+    .nokia-phone {
+        border-radius: 25px;
+        padding: 15px 12px;
+    }
+    
+    .nokia-brand {
+        font-size: 10px;
+        letter-spacing: 4px;
+    }
+    
+    .screen-frame {
+        padding: 6px;
+    }
+    
+    .screen-container {
+        padding: 4px;
+    }
+    
+    .score-display {
+        font-size: 6px;
+        padding: 3px 6px;
+    }
+    
+    .controls-hint {
+        font-size: 5px;
+    }
+    
+    .instructions {
+        font-size: 6px;
+        margin-top: 20px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+    body {
+        padding: 10px;
+    }
+    
+    .nokia-phone {
+        border-radius: 20px;
+        padding: 12px 10px;
+    }
+    
+    .instructions {
+        display: none;
+    }
+}
+
+/* =============================================================================
+   ANIMATIONS
+   ============================================================================= */
+
+/* Subtle screen flicker for authenticity (optional) */
+@keyframes lcd-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.98; }
+}
+
+.screen-container {
+    animation: lcd-flicker 4s infinite;
+}
+
+/* Shake animation for game over */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-3px); }
+    40% { transform: translateX(3px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+}
+
+.shake {
+    animation: shake 0.3s ease-in-out;
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Nokia Snake Game</title>
     <!-- Retro pixel font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,15 +11,39 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <!-- Score display area -->
-        <div class="score-display">
-            <span>SCORE: <span id="score">0</span></span>
-            <span>HIGH: <span id="high-score">0</span></span>
+    <!-- Nokia Phone Frame -->
+    <div class="nokia-phone">
+        <!-- Phone speaker -->
+        <div class="phone-speaker"></div>
+        
+        <!-- Nokia brand -->
+        <div class="nokia-brand">NOKIA</div>
+        
+        <!-- Screen frame -->
+        <div class="screen-frame">
+            <div class="screen-container">
+                <!-- Score display -->
+                <div class="score-display">
+                    <span>SCORE: <span id="score">0</span></span>
+                    <span>HIGH: <span id="high-score">0</span></span>
+                </div>
+                <!-- Game canvas -->
+                <canvas id="gameCanvas"></canvas>
+            </div>
         </div>
-        <!-- Game canvas -->
-        <canvas id="gameCanvas"></canvas>
+        
+        <!-- Phone controls hint -->
+        <div class="controls-hint">
+            <span>SPACE: Start/Pause</span>
+        </div>
     </div>
+    
+    <!-- Instructions (desktop only) -->
+    <div class="instructions">
+        <p>Use <strong>Arrow Keys</strong> or <strong>WASD</strong> to move</p>
+        <p>Press <strong>SPACE</strong> to Start / Pause</p>
+    </div>
+    
     <script src="game.js"></script>
 </body>
 </html>
