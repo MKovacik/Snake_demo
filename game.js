@@ -34,6 +34,7 @@ const CONFIG = {
 
 let snake = [];                     // Array of {x, y} coordinates
 let direction = CONFIG.INITIAL_DIRECTION;
+let nextDirection = CONFIG.INITIAL_DIRECTION;  // Queued direction for next tick
 let gameLoop = null;
 let isGameRunning = false;
 
@@ -72,12 +73,16 @@ function initSnake() {
     }
     
     direction = CONFIG.INITIAL_DIRECTION;
+    nextDirection = CONFIG.INITIAL_DIRECTION;
 }
 
 /**
  * Move the snake one cell in the current direction
  */
 function moveSnake() {
+    // Apply queued direction
+    direction = nextDirection;
+    
     // Calculate new head position
     const head = { ...snake[0] };
     
@@ -205,11 +210,54 @@ function stopGame() {
 // INPUT HANDLING
 // =============================================================================
 
+// Direction key mappings
+const DIRECTION_KEYS = {
+    'ArrowUp': 'UP',    'w': 'UP',    'W': 'UP',
+    'ArrowDown': 'DOWN', 's': 'DOWN', 'S': 'DOWN',
+    'ArrowLeft': 'LEFT', 'a': 'LEFT', 'A': 'LEFT',
+    'ArrowRight': 'RIGHT', 'd': 'RIGHT', 'D': 'RIGHT',
+};
+
+// Opposite directions (for preventing 180-degree turns)
+const OPPOSITES = {
+    'UP': 'DOWN',
+    'DOWN': 'UP',
+    'LEFT': 'RIGHT',
+    'RIGHT': 'LEFT',
+};
+
 /**
- * Handle keyboard input for starting game
+ * Queue a direction change (prevents 180-degree turns)
+ */
+function setDirection(newDirection) {
+    // Prevent 180-degree turns
+    if (OPPOSITES[newDirection] === direction) {
+        return;
+    }
+    // Prevent setting same direction
+    if (newDirection === nextDirection) {
+        return;
+    }
+    nextDirection = newDirection;
+}
+
+/**
+ * Handle keyboard input
  */
 function handleKeyDown(e) {
-    if (e.key === ' ' || e.key === 'Spacebar') {
+    const key = e.key;
+    
+    // Direction controls (Arrow keys and WASD)
+    if (DIRECTION_KEYS[key]) {
+        e.preventDefault();
+        if (isGameRunning) {
+            setDirection(DIRECTION_KEYS[key]);
+        }
+        return;
+    }
+    
+    // Space bar - Start game
+    if (key === ' ' || key === 'Spacebar') {
         e.preventDefault();
         if (!isGameRunning) {
             startGame();
