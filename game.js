@@ -15,10 +15,18 @@ const CONFIG = {
     // Snake settings
     INITIAL_SNAKE_LENGTH: 4,
     INITIAL_DIRECTION: 'RIGHT',
-    GAME_SPEED: 150,        // Milliseconds per move (Nokia feel)
     
     // Scoring
     POINTS_PER_FOOD: 10,    // Points awarded for each food eaten
+    
+    // Speed levels for progressive difficulty (score threshold -> speed in ms)
+    SPEED_LEVELS: [
+        { threshold: 0,   speed: 150 },   // Starting speed (easy)
+        { threshold: 50,  speed: 130 },   // After 50 points
+        { threshold: 100, speed: 110 },   // After 100 points
+        { threshold: 200, speed: 90 },    // After 200 points
+        { threshold: 300, speed: 70 },    // Maximum speed
+    ],
     
     // Nokia LCD Color Scheme
     COLORS: {
@@ -54,6 +62,7 @@ let gameLoop = null;
 let gameState = GameState.START;    // Current game state
 let score = 0;                      // Current game score
 let highScore = 0;                  // Best score (persisted)
+let currentSpeed = CONFIG.SPEED_LEVELS[0].speed;  // Current game speed
 
 // =============================================================================
 // CANVAS SETUP
@@ -246,6 +255,7 @@ function checkCollisions() {
 function addScore(points) {
     score += points;
     updateScoreDisplay();
+    updateSpeed();  // Check if speed should increase
 }
 
 /**
@@ -271,6 +281,45 @@ function saveHighScore() {
     if (score > highScore) {
         highScore = score;
         localStorage.setItem('snakeHighScore', highScore.toString());
+    }
+}
+
+// =============================================================================
+// SPEED / DIFFICULTY MANAGEMENT
+// =============================================================================
+
+/**
+ * Get the appropriate speed based on current score
+ */
+function getSpeedForScore(currentScore) {
+    // Find the highest threshold that the score exceeds
+    let speed = CONFIG.SPEED_LEVELS[0].speed;
+    
+    for (const level of CONFIG.SPEED_LEVELS) {
+        if (currentScore >= level.threshold) {
+            speed = level.speed;
+        }
+    }
+    
+    return speed;
+}
+
+/**
+ * Update game speed based on current score
+ * Restarts game loop if speed changed
+ */
+function updateSpeed() {
+    const newSpeed = getSpeedForScore(score);
+    
+    if (newSpeed !== currentSpeed) {
+        currentSpeed = newSpeed;
+        
+        // Restart game loop with new speed
+        if (gameState === GameState.PLAYING) {
+            startGameLoop();
+        }
+        
+        console.log(`Speed increased! Now: ${currentSpeed}ms per move`);
     }
 }
 
@@ -351,6 +400,7 @@ function update() {
 function startGame() {
     gameState = GameState.PLAYING;
     score = 0;
+    currentSpeed = CONFIG.SPEED_LEVELS[0].speed;  // Reset to starting speed
     updateScoreDisplay();
     initSnake();
     spawnFood();
@@ -366,7 +416,7 @@ function startGame() {
  */
 function startGameLoop() {
     if (gameLoop) clearInterval(gameLoop);
-    gameLoop = setInterval(update, CONFIG.GAME_SPEED);
+    gameLoop = setInterval(update, currentSpeed);
 }
 
 /**
